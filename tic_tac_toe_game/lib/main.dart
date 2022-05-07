@@ -4,9 +4,11 @@ import 'package:flutter_complete_guide/start-menu.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
+   await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
     DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
   ]);
 
   runApp(TicTacToeGame());

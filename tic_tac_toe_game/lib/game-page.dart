@@ -25,6 +25,7 @@ class _GamePageState extends State<GamePage> {
 
   List<List<String>> board;
   String previousMove = Player.playerNone;
+  Map<String, int> results = {Player.playerO: 0, Player.playerX: 0};
 
   @override
   void initState() {
@@ -46,11 +47,39 @@ class _GamePageState extends State<GamePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: Utils.boxBuilder(
-              board, (rowIndex, rowValue) => buildRow(rowIndex)),
+        body: ListView(
+          children: [_ResultAndBoard()],
         ));
+  }
+
+  Widget _ResultAndBoard() {
+    return Container(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ConstrainedBox(
+            constraints: BoxConstraints.expand(height: 100, width: 200),
+            child: Container(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(Player.playerO + ' VS ' + Player.playerX,
+                        style: TextStyle(
+                          fontSize: 30,
+                        )),
+                    Text('Player vs Player'),
+                    Text(
+                        results[Player.playerO].toString() +
+                            " : " +
+                            results[Player.playerX].toString(),
+                        style: TextStyle(fontSize: 30)),
+                  ]),
+            )),
+        Column(
+            children: Utils.boxBuilder(
+                board, (rowIndex, rowValue) => buildRow(rowIndex))),
+      ],
+    ));
   }
 
   Color getBackgroundColor() {
@@ -75,14 +104,25 @@ class _GamePageState extends State<GamePage> {
         margin: EdgeInsets.all(0.0),
         padding: EdgeInsets.zero,
         child: SizedBox(
-          height: 35,
-          width: 35,
-          child:ElevatedButton(
-          style: ElevatedButton.styleFrom(
-           fixedSize: Size(boxSize, boxSize), primary: color),
-          child: Text(boxValue, style: TextStyle(fontSize: 25), ),
-          onPressed: () => selectField(boxValue, rowIndex, fieldIndex),
-        )));
+            height: _setValueDueToOrientation(),
+            width: _setValueDueToOrientation(),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  fixedSize: Size(boxSize, boxSize), primary: color),
+              child: Text(
+                boxValue,
+                style: TextStyle(fontSize: 25),
+              ),
+              onPressed: () => selectField(boxValue, rowIndex, fieldIndex),
+            )));
+  }
+
+  double _setValueDueToOrientation() {
+    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      return 30.0;
+    } else {
+      return 35.0;
+    }
   }
 
   getFieldColor(String boxValue) {
@@ -106,8 +146,11 @@ class _GamePageState extends State<GamePage> {
         board[rowIndex][fieldIndex] = currentMove;
       });
 
-      if (Utils.isWinner(rowIndex, fieldIndex, board, 5)) {
+      if (Utils.isWinner(rowIndex, fieldIndex, board, boardSize)) {
         showEndDialog('Player $currentMove Won');
+        setState(() {
+          results[currentMove] = results[currentMove] + 1;
+        });
       } else if (isEnd()) {
         showEndDialog('A Draw! Try again!');
       }

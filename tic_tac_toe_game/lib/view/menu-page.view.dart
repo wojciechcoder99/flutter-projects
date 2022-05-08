@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'game-page.dart';
+import 'game-page.view.dart';
 
-class StartMenu extends StatelessWidget {
+class MenuPage extends StatelessWidget {
   final String title;
-  const StartMenu({@required this.title});
+  const MenuPage({@required this.title});
 
   @override
   Widget build(BuildContext context) {

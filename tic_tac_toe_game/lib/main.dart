@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_complete_guide/start-menu.dart';
+
+import 'view/menu-page.view.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,7 @@ class TicTacToeGame extends StatelessWidget {
     return MaterialApp(
       title: title,
       theme: ThemeData(primaryColor: Colors.blue),
-      home: StartMenu(title: title),
+      home: MenuPage(title: title),
     );
   }
 }

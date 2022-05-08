@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/view-model/constants.dart';
+import 'package:flutter_complete_guide/utils/constants.dart';
 import 'package:get/get.dart';
 
 import '../model/player.model.dart';
@@ -79,7 +79,9 @@ class GameController extends GetxController {
 
       updateBoardAndMove(currentMove, rowIndex, fieldIndex);
       nextMoveText();
-      if (isWinner(rowIndex, fieldIndex, boardSize)) {
+      String winner = isWinner(rowIndex, fieldIndex, boardSize).value;
+      if (winner != Player.playerNone) {
+        print(winner);
         results[currentMove] = results[currentMove] + 1;
         update();
         return currentMove;
@@ -101,20 +103,71 @@ class GameController extends GetxController {
         .every((row) => row.every((field) => field != Player.playerNone));
   }
 
-  bool isWinner(int rowIndex, int fieldIndex, int boardSize) {
-    var col = 0, row = 0, diag = 0, rdiag = 0;
-    final player = board[rowIndex][fieldIndex];
-    final n = boardSize - 1;
+  RxString isWinner(int rowIndex, int fieldIndex, int boardSize) {
+    int lengthToWin = 5;
 
-    for (int i = 0; i < n; i++) {
-      if (board[rowIndex][i] == player) col++;
-      if (board[i][fieldIndex] == player) row++;
-      if (board[i][i] == player) diag++;
-      if (board[i][n - i - 1] == player) {
-        rdiag++;
+    for (int top = 0; top <= board.length - lengthToWin; ++top) {
+      int bottom = top + lengthToWin - 1;
+
+      for (int left = 0; left <= board.length - lengthToWin; ++left) {
+        int right = left + lengthToWin - 1;
+
+        // Check each row.
+        nextRow:
+        for (int row = top; row <= bottom; ++row) {
+          if (board[row][left] == Player.playerNone) {
+            continue;
+          }
+
+          for (int col = left; col <= right; ++col) {
+            if (board[row][col] != board[row][left]) {
+              continue nextRow;
+            }
+          }
+          return board[row][left];
+        }
+
+        // Check each column.
+        nextCol:
+        for (int col = left; col <= right; ++col) {
+          if (board[top][col] == Player.playerNone) {
+            continue;
+          }
+
+          for (int row = top; row <= bottom; ++row) {
+            if (board[row][col] != board[top][col]) {
+              continue nextCol;
+            }
+          }
+
+          return board[top][col];
+        }
+
+        // Check top-left to bottom-right diagonal.
+        diag1:
+        if (board[top][left] != Player.playerNone) {
+          for (int i = 1; i < lengthToWin; ++i) {
+            if (board[top + i][left + i] != board[top][left]) {
+              break diag1;
+            }
+          }
+
+          return board[top][left];
+        }
+
+        // Check top-right to bottom-left diagonal.
+        diag2:
+        if (board[top][right] != Player.playerNone) {
+          for (int i = 1; i < lengthToWin; ++i) {
+            if (board[top + i][right - i] != board[top][right]) {
+              break diag2;
+            }
+          }
+          return board[top][right];
+        }
       }
     }
-    return row == 5 || col == 5 || diag == 5 || rdiag == 5;
+    return RxString(Player.playerNone);
   }
 
   List<Widget> boxBuilder<M>(

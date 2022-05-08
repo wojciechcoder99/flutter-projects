@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/view-model/constants.dart';
+import 'package:flutter_complete_guide/utils/constants.dart';
 import 'package:flutter_complete_guide/view/menu-page.view.dart';
 import 'package:get/get.dart';
 
 import '../model/player.model.dart';
+import '../utils/constants.dart';
 import '../view-model/game-controller.vm.dart';
 
 class GamePage extends StatefulWidget {

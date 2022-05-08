@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/view-model/constants.dart';
+import 'package:flutter_complete_guide/view/menu-page.view.dart';
 import 'package:get/get.dart';
 
 import '../model/player.model.dart';
-import '../utils.dart';
 import '../view-model/game-controller.vm.dart';
 
 class GamePage extends StatefulWidget {
@@ -18,13 +18,12 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-
-  final gameController = Get.put(GameController());
+  GameController gameController = Get.put(GameController());
 
   @override
   void initState() {
     super.initState();
-    gameController.setEmptyFields();
+    gameController.initEmptyFields();
   }
 
   @override
@@ -33,10 +32,19 @@ class _GamePageState extends State<GamePage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.title),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => getBackAndDeleteController(context)),
         ),
         body: ListView(
           children: [_ResultAndBoard()],
         ));
+  }
+
+  Future<dynamic> getBackAndDeleteController(BuildContext context) {
+    Get.delete<GameController>();
+    return Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => MenuPage(title: 'Tic Tac Toe')));
   }
 
   Widget _ResultAndBoard() {
@@ -61,7 +69,7 @@ class _GamePageState extends State<GamePage> {
                             _createResultWidget(
                                 Icons.circle_outlined,
                                 Colors.pink,
-                                Player.playerX,
+                                Player.playerO,
                                 Constants.WIN_LABEL),
                             _createResultWidget(Icons.scale_sharp, Colors.grey,
                                 Constants.DRAW_LABEL, Constants.DRAW_LABEL),
@@ -69,20 +77,27 @@ class _GamePageState extends State<GamePage> {
             )),
         Obx(() => Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: Utils.boxBuilder(
-                gameController.board, (rowIndex, rowValue) => buildRow(rowIndex)))),
+            children: gameController.boxBuilder(gameController.board,
+                (rowIndex, rowValue) => buildRow(rowIndex)))),
         Container(
             padding: EdgeInsets.only(top: 20, bottom: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _setCurrentMovePlayerIcon(),
-                Text(gameController.nextMoveText())
+                Obx(() => _setCurrentMovePlayerIcon()),
+                Obx(() => Text(gameController.moves[Constants.NEXT_MOVE],
+                    style: TextStyle(fontWeight: FontWeight.bold))),
               ],
             )),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _createCircleOptionButton(Icons.restart_alt_sharp, () {}),
-          _createCircleOptionButton(Icons.home_filled, () {}),
+          _createCircleOptionButton(Icons.restart_alt_sharp, () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => GamePage(title: 'Tic Tac Toe')));
+          }),
+          _createCircleOptionButton(Icons.home_filled, () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => MenuPage(title: 'Tic Tac Toe')));
+          }),
         ])
       ],
     ));
@@ -92,8 +107,9 @@ class _GamePageState extends State<GamePage> {
       IconData icon, MaterialColor color, String player, String label) {
     return Column(children: [
       Icon(icon, color: color, size: 60.0),
-      Text(gameController.results[player].toString() + Constants.SPACE + label,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      Obx(() => Text(
+          gameController.results[player].toString() + Constants.SPACE + label,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
     ]);
   }
 
@@ -110,10 +126,10 @@ class _GamePageState extends State<GamePage> {
 
   // ignore: missing_return
   Widget _setCurrentMovePlayerIcon() {
-    switch (gameController.setCurrentMovePlayer()) {
-      case Player.playerO:
+    switch (gameController.moves[Constants.NEXT_MOVE]) {
+      case 'Player\'s O move':
         return Icon(Icons.circle_outlined, color: Colors.pink, size: 40.0);
-      case Player.playerX:
+      case 'Player\'s X move':
         return Icon(Icons.close, color: Colors.blue, size: 40.0);
     }
   }
@@ -122,7 +138,7 @@ class _GamePageState extends State<GamePage> {
     final row = gameController.board[rowIndex];
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: Utils.boxBuilder(
+        children: gameController.boxBuilder(
             row, (fieldIndex, boxValue) => buildField(rowIndex, fieldIndex)));
   }
 
@@ -130,15 +146,17 @@ class _GamePageState extends State<GamePage> {
     final boxValue = gameController.board[rowIndex][fieldIndex];
     final color = gameController.getFieldColor(boxValue.value);
 
-    return Container(
+    return Obx(() => Container(
         margin: EdgeInsets.all(0.0),
         padding: EdgeInsets.zero,
         child: SizedBox(
-            height: _setValueDueToOrientation(),
-            width: _setValueDueToOrientation(),
-            child:ElevatedButton(
+          height: _setValueDueToOrientation(),
+          width: _setValueDueToOrientation(),
+          child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  fixedSize: Size(GameController.boxSize, GameController.boxSize), primary: color),
+                  fixedSize:
+                      Size(GameController.boxSize, GameController.boxSize),
+                  primary: color),
               child: Container(
                   child: Center(
                       child: Text(
@@ -146,8 +164,16 @@ class _GamePageState extends State<GamePage> {
                 style: TextStyle(fontSize: 25),
                 textAlign: TextAlign.center,
               ))),
-              onPressed: () => gameController.selectField(boxValue.value, rowIndex, fieldIndex)),
-            ));
+              onPressed: () =>
+                  _selectField(boxValue.value, rowIndex, fieldIndex)),
+        )));
+  }
+
+  void _selectField(String boxValue, int rowIndex, int fieldIndex) {
+    String result = gameController.selectField(boxValue, rowIndex, fieldIndex);
+    if (result != null) {
+      showEndDialog(result);
+    }
   }
 
   Future showEndDialog(String title) {
@@ -160,15 +186,20 @@ class _GamePageState extends State<GamePage> {
               actions: [
                 ElevatedButton(
                     onPressed: () {
-                      gameController.setEmptyFields();
-                      Navigator.of(context).pop();
+                      clearBoard();
                     },
-                    child: Text('Restart'))
+                    child: Text('Restart')),
               ],
             ));
   }
 
-    double _setValueDueToOrientation() {
+  void clearBoard() {
+    gameController.clearBoard();
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
+  }
+
+  double _setValueDueToOrientation() {
     if (MediaQuery.of(context).orientation == Orientation.landscape) {
       return 30.0;
     } else {

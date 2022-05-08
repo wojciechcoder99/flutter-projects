@@ -11,37 +11,48 @@ class GameController extends GetxController {
 
   List<RxList<RxString>> board;
 
-  Map<String, int> results = {
-    Player.playerO: 0,
-    Player.playerX: 0,
-    Constants.DRAW_LABEL: 0
-  };
+  var results =
+      {Player.playerO: 0, Player.playerX: 0, Constants.DRAW_LABEL: 0}.obs;
+  var moves = {Constants.NEXT_MOVE: 'Player\'s X move'}.obs;
 
-  void setEmptyFields() {
+  void initEmptyFields() {
     board = List.generate(
         boardSize,
-        (_) => RxList.generate(boardSize, (_) => RxString(Player.playerNone))).obs;
+        (_) =>
+            RxList.generate(boardSize, (_) => RxString(Player.playerNone))).obs;
+  }
+
+  void clearBoard() {
+    for (int i = 0; i < boardSize; i++) {
+      for (int i = 0; i < boardSize; i++) {
+        board[i][i] = RxString(Player.playerNone);
+      }
+    }
   }
 
 // ignore: missing_return
   String setCurrentMovePlayer() {
-    return _calcNextMove();
+    return _calcCurrentMove();
   }
 
   // ignore: missing_return
-  String nextMoveText() {
-    String nextMove = _calcNextMove();
-    switch (nextMove) {
+  void nextMoveText() {
+    String nM = _calcCurrentMove();
+    switch (nM) {
       case Player.ai:
-        return 'AI\'s move';
+        moves[Constants.NEXT_MOVE] = 'AI\'s move';
+        break;
       case Player.playerX:
-        return 'Player\'s $nextMove move';
+        moves[Constants.NEXT_MOVE] = 'Player\'s $nM move';
+        break;
       case Player.playerO:
-        return 'Player\'s $nextMove move';
+        moves[Constants.NEXT_MOVE] = 'Player\'s $nM move';
+        break;
     }
+    update();
   }
 
-  String _calcNextMove() {
+  String _calcCurrentMove() {
     return previousMove == Player.playerX ? Player.playerO : Player.playerX;
   }
 
@@ -64,15 +75,17 @@ class GameController extends GetxController {
 
   selectField(String boxValue, int rowIndex, int fieldIndex) {
     if (boxValue == Player.playerNone) {
-      String currentMove = _calcNextMove();
+      String currentMove = _calcCurrentMove();
 
       updateBoardAndMove(currentMove, rowIndex, fieldIndex);
-
+      nextMoveText();
       if (isWinner(rowIndex, fieldIndex, boardSize)) {
         results[currentMove] = results[currentMove] + 1;
+        update();
         return currentMove;
       } else if (isEnd()) {
         results[Constants.DRAW_LABEL] = results[Constants.DRAW_LABEL] + 1;
+        update();
         return Constants.DRAW_LABEL;
       }
     }
@@ -102,5 +115,15 @@ class GameController extends GetxController {
       }
     }
     return row == 5 || col == 5 || diag == 5 || rdiag == 5;
+  }
+
+  List<Widget> boxBuilder<M>(
+      List<M> models, Widget Function(int index, M model) builder) {
+    return models
+        .asMap()
+        .map<int, Widget>(
+            (index, model) => MapEntry(index, builder(index, model)))
+        .values
+        .toList();
   }
 }

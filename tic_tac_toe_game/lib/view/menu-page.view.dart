@@ -13,7 +13,8 @@ class MenuPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('Tic Tac Toe'),
         ),
-        body: Column(
+        body: ListView(
+         children: [Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -88,8 +89,22 @@ class MenuPage extends StatelessWidget {
                           MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
                     },
                   ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(10.0),                
+                    child: ElevatedButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                          Text('Ranking', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold))
+                      ],),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
+                    },
+                  ),
                 )
           ],
-        ));
+        )]));
   }
 }

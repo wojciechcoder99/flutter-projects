@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/utils/constants.dart';
+import 'package:flutter_complete_guide/utils/file-manager.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../model/player.model.dart';
 import 'ai-controller.vm.dart';
@@ -20,6 +22,7 @@ class GameController extends GetxController {
 
   final bool isMultiplayer;
   AIController aiController;
+  List<String> ranking;
 
   GameController(this.isMultiplayer) {
     if (!isMultiplayer) {
@@ -203,5 +206,30 @@ class GameController extends GetxController {
             (index, model) => MapEntry(index, builder(index, model)))
         .values
         .toList();
+  }
+
+  void saveToFile() {
+    String toSave = DateFormat("yyyy-MM-dd").format(DateTime.now()) +
+        '|' +
+        Player.playerX +
+        '|' +
+        results[Player.playerX].toString() +
+        '|' +
+        Player.playerO +
+        '|' +
+        results[Player.playerO].toString() +
+        '|' +
+        Constants.DRAW_LABEL +
+        '|' +
+        results[Constants.DRAW_LABEL].toString() +
+        '\\';
+    FileManager fileManager = FileManager();
+    fileManager.writeLine(toSave);
+    fileManager.readFile().then((value) => print(value));
+  }
+
+  Future<String> convertOutputFile() async {
+    FileManager fileManager = FileManager();
+    return fileManager.readFile();
   }
 }

@@ -48,6 +48,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   Future<dynamic> getBackAndDeleteController(BuildContext context) {
+    gameController.saveToFile();
     Get.delete<GameController>();
     return Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => MenuPage(title: 'Tic Tac Toe')));
@@ -98,12 +99,14 @@ class _GamePageState extends State<GamePage> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           _createCircleOptionButton(Icons.restart_alt_sharp, () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
+                builder: (_) => GamePage(
+                    title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
           }),
           _createCircleOptionButton(Icons.home_filled, () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => MenuPage(title: 'Tic Tac Toe')));
-            Get.delete<GameController>();    
+            gameController.saveToFile();
+            Get.delete<GameController>();
           }),
         ])
       ],
@@ -202,8 +205,9 @@ class _GamePageState extends State<GamePage> {
 
   void clearBoard() {
     gameController.clearBoard();
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) =>
+            GamePage(title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
   }
 
   double _setValueDueToOrientation() {
@@ -212,5 +216,10 @@ class _GamePageState extends State<GamePage> {
     } else {
       return 35.0;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

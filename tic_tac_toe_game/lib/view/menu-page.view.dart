@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/view/ranking-page.view.dart';
 
 import 'game-page.view.dart';
 
@@ -98,7 +99,10 @@ class MenuPage extends StatelessWidget {
                       children: [
                           Text('Ranking', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold))
                       ],),
-                    onPressed: null
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => RankingPage()));
+                    }
                   ),
                 )
           ],

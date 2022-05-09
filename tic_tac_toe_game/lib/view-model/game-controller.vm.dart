@@ -48,7 +48,7 @@ class GameController extends GetxController {
   }
 
   // ignore: missing_return
-  void nextMoveText() {
+  void setCurrentMoveText() {
     String nM = _calcCurrentMove();
     switch (nM) {
       case Player.ai:
@@ -101,14 +101,14 @@ class GameController extends GetxController {
       String currentMove = _calcCurrentMove();
 
       updateBoardAndMove(currentMove, rowIndex, fieldIndex);
-      nextMoveText();
+      setCurrentMoveText();
       String winner = isWinner(rowIndex, fieldIndex, boardSize).value;
       if (winner != Player.playerNone) {
         print(winner);
         results[currentMove] = results[currentMove] + 1;
         previousMove = Player.playerNone;
         update();
-        return currentMove;
+        return winner;
       } else if (isEnd()) {
         results[Constants.DRAW_LABEL] = results[Constants.DRAW_LABEL] + 1;
         previousMove = Player.playerNone;

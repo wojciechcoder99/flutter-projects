@@ -61,7 +61,7 @@ class MenuPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
+                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: true)));
                     },
                   ),
             ),
@@ -86,7 +86,7 @@ class MenuPage extends StatelessWidget {
                       ],),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
+                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: false)));
                     },
                   ),
                 ),
@@ -98,10 +98,7 @@ class MenuPage extends StatelessWidget {
                       children: [
                           Text('Ranking', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold))
                       ],),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
-                    },
+                    onPressed: null
                   ),
                 )
           ],

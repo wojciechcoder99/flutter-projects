@@ -9,21 +9,26 @@ import '../view-model/game-controller.vm.dart';
 
 class GamePage extends StatefulWidget {
   final String title;
+  final bool isMultiplayer;
 
   const GamePage({
     @required this.title,
+    @required this.isMultiplayer,
   });
 
   @override
-  _GamePageState createState() => _GamePageState();
+  _GamePageState createState() => _GamePageState(isMultiplayer);
 }
 
 class _GamePageState extends State<GamePage> {
-  GameController gameController = Get.put(GameController());
+  final bool isMultiplayer;
+  GameController gameController;
+  _GamePageState(this.isMultiplayer);
 
   @override
   void initState() {
     super.initState();
+    gameController = Get.put(GameController(isMultiplayer));
     gameController.initEmptyFields();
   }
 
@@ -93,11 +98,12 @@ class _GamePageState extends State<GamePage> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           _createCircleOptionButton(Icons.restart_alt_sharp, () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => GamePage(title: 'Tic Tac Toe')));
+                builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
           }),
           _createCircleOptionButton(Icons.home_filled, () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => MenuPage(title: 'Tic Tac Toe')));
+            Get.delete<GameController>();    
           }),
         ])
       ],
@@ -197,7 +203,7 @@ class _GamePageState extends State<GamePage> {
   void clearBoard() {
     gameController.clearBoard();
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe')));
+        MaterialPageRoute(builder: (_) => GamePage(title: 'Tic Tac Toe', isMultiplayer: isMultiplayer)));
   }
 
   double _setValueDueToOrientation() {

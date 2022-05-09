@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/utils/constants.dart';
 import 'package:get/get.dart';
 
 import '../model/player.model.dart';
+import 'ai-controller.vm.dart';
 
 class GameController extends GetxController {
   static final int boardSize = 10;
@@ -14,6 +17,15 @@ class GameController extends GetxController {
   var results =
       {Player.playerO: 0, Player.playerX: 0, Constants.DRAW_LABEL: 0}.obs;
   var moves = {Constants.NEXT_MOVE: 'Player\'s X move'}.obs;
+
+  final bool isMultiplayer;
+  AIController aiController;
+
+  GameController(this.isMultiplayer) {
+    if (!isMultiplayer) {
+      aiController = Get.put(AIController(new Random()));
+    }
+  }
 
   void initEmptyFields() {
     board = List.generate(
@@ -74,6 +86,17 @@ class GameController extends GetxController {
   }
 
   selectField(String boxValue, int rowIndex, int fieldIndex) {
+    if (isMultiplayer) {
+      return _selectField(boxValue, rowIndex, fieldIndex);
+    } else {
+      String result = _selectField(boxValue, rowIndex, fieldIndex);
+      if (result != null) return result;
+      NextMove values = aiController.nextMove();
+      return _selectField(Player.playerNone, values.row, values.field);
+    }
+  }
+
+  _selectField(String boxValue, int rowIndex, int fieldIndex) {
     if (boxValue == Player.playerNone) {
       String currentMove = _calcCurrentMove();
 
@@ -83,10 +106,12 @@ class GameController extends GetxController {
       if (winner != Player.playerNone) {
         print(winner);
         results[currentMove] = results[currentMove] + 1;
+        previousMove = Player.playerNone;
         update();
         return currentMove;
       } else if (isEnd()) {
         results[Constants.DRAW_LABEL] = results[Constants.DRAW_LABEL] + 1;
+        previousMove = Player.playerNone;
         update();
         return Constants.DRAW_LABEL;
       }

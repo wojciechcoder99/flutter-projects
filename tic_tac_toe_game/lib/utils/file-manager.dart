@@ -12,7 +12,7 @@ class FileManager {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/rankingTop1.txt');
+    return File('$path/dbAsAFile.txt');
   }
 
   Future<String> readFile() async {

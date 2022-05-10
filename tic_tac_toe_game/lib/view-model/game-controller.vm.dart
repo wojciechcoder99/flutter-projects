@@ -222,14 +222,23 @@ class GameController extends GetxController {
         Constants.DRAW_LABEL +
         '|' +
         results[Constants.DRAW_LABEL].toString() +
+        '|' +
+        '  ' +
         '\\';
-    FileManager fileManager = FileManager();
-    fileManager.writeLine(toSave);
-    fileManager.readFile().then((value) => print(value));
+    if (!isMultiplayer) {
+      toSave = toSave.replaceFirst('  ', 'Game with AI');
+    }
+    if (toSave != Constants.EMPTY_STRING) {
+      FileManager fileManager = FileManager();
+      fileManager.writeLine(toSave);
+      fileManager.readFile().then((value) => print(value));
+    }
   }
 
   Future<String> convertOutputFile() async {
     FileManager fileManager = FileManager();
-    return fileManager.readFile();
+    return await Future.delayed(const Duration(seconds: 2), () {
+      return fileManager.readFile();
+    });
   }
 }

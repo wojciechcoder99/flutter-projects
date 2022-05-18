@@ -209,6 +209,10 @@ class GameController extends GetxController {
   }
 
   void saveToFile() {
+    String mode = '';
+    if (!isMultiplayer) {
+      mode = 'Game with AI';
+    }
     String toSave = DateFormat("yyyy-MM-dd").format(DateTime.now()) +
         '|' +
         Player.playerX +
@@ -223,11 +227,8 @@ class GameController extends GetxController {
         '|' +
         results[Constants.DRAW_LABEL].toString() +
         '|' +
-        '  ' +
+        mode +
         '\\';
-    if (!isMultiplayer) {
-      toSave = toSave.replaceFirst('  ', 'Game with AI');
-    }
     if (toSave != Constants.EMPTY_STRING) {
       FileManager fileManager = FileManager();
       fileManager.writeLine(toSave);

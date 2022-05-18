@@ -45,7 +45,6 @@ class _RankingPage extends State<RankingPage> {
   }
 
   Future<dynamic> getBackAndDeleteController(BuildContext context) {
-    gameController.saveToFile();
     Get.delete<GameController>();
     return Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => MenuPage(title: 'Tic Tac Toe')));

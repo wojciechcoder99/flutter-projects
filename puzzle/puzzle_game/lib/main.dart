@@ -1,5 +1,9 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/puzzle_piece.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_complete_guide/split_image.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,89 +33,147 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Widget> pieces = [];
+  List<Widget> draggable = [];
+  ByteData imageData;
+  Uint8List list;
+  List<Image> splittedImage = [];
 
   initState() {
     super.initState();
-    getImage(
-        Image.network('https://th.bing.com/th/id/R.28e4e5f692cafad1e66d76da5497ee3e?rik=lhDSelFli28gwA&riu=http%3a%2f%2fcdn.carbuzz.com%2fgallery-images%2f1600%2f759000%2f500%2f759587.jpg&ehk=TpJotfZ9HWOt3YXeXZLdWq9Arhp0bg3PSkD%2f1n3fQ6c%3d&risl=&pid=ImgRaw&r=0',
-           width: 600, height: 600));
-  }
-
-  getImage(Image source) {
-    var image = source;
-
-    if (image != null) {
-      setState(() {
-        pieces.clear();
-      });
-      splitImage(image);
-    }
-  }
-
-  void splitImage(Image image) {
-    Size imageSize = Size(
-      image.width,
-      image.height,
-    );
-
-    for (int x = 0; x < widget.rows; x++) {
-      for (int y = 0; y < widget.cols; y++) {
-        setState(() {
-          pieces.add(PuzzlePiece(
-              key: GlobalKey(),
-              image: image,
-              imageSize: imageSize,
-              row: x,
-              col: y,
-              maxRow: widget.rows,
-              maxCol: widget.cols,
-              bringToTop: this.bringToTop,
-              sendToBack: this.sendToBack));
-        });
-      }
-    }
+    rootBundle.load('assets/images/puzzle_1.jpg').then((data) => setState(() =>
+        {splittedImage = SplitImage.splitImage(data.buffer.asUint8List())}));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: SizedBox(
-          height: 500,
-          child: Column(
-          children: [Stack(
-            children:[
-            Container(
-            alignment:  Alignment.center,
-            height: 350, width: 400,
-          child: ColorFiltered(
-            colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color),
-            child: Image.network('https://th.bing.com/th/id/R.28e4e5f692cafad1e66d76da5497ee3e?rik=lhDSelFli28gwA&riu=http%3a%2f%2fcdn.carbuzz.com%2fgallery-images%2f1600%2f759000%2f500%2f759587.jpg&ehk=TpJotfZ9HWOt3YXeXZLdWq9Arhp0bg3PSkD%2f1n3fQ6c%3d&risl=&pid=ImgRaw&r=0',
-           width: 600, height: 600))
-          ),
-          Positioned(
-            top: 15,
-          child: Container(
-            alignment:  Alignment.bottomCenter,
-            height: 550, width: 400,
-          child: Stack(children: pieces)))])],
-        )));
+    if (splittedImage == null || splittedImage.length == 0) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(
+          appBar: AppBar(title: Text('Score'), backgroundColor: Colors.pink),
+          body: SizedBox(
+              height:  MediaQuery.of(context).size.height,
+              width: 400,
+              child: Column(children: [
+                Row(
+                  children: splittedImage.sublist(0, 3).map((piece) {
+                    return SizedBox(
+                        width: 128,
+                        height: 120,
+                        child: Container(
+                            height: 40,
+                            width: 130,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1),
+                            ),
+                            child: Image(
+                              image: piece.image,
+                              fit: BoxFit.fill,
+                              color: Colors.grey,    
+                              colorBlendMode: BlendMode.color, 
+                            )));
+                  }).toList(),
+                ),
+                Row(
+                  children: splittedImage.sublist(3, 6).map((piece) {
+                    return SizedBox(
+                        width: 128,
+                        height: 120,
+                        child: Container(
+                            height: 40,
+                            width: 130,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1),
+                            ),
+                            child: Image(
+                              image: piece.image,
+                              fit: BoxFit.fill,
+                              color: Colors.grey,    
+                              colorBlendMode: BlendMode.color, 
+                            )));
+                  }).toList(),
+                ),
+                Row(
+                  children: splittedImage.sublist(6, 9).map((piece) {
+                    return SizedBox(
+                        width: 128,
+                        height: 120,
+                        child: Container(
+                            height: 40,
+                            width: 130,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1),
+                              color: Colors.grey,
+                            ),
+                            child: Image(
+                              image: piece.image,
+                              fit: BoxFit.fill,     
+                              color: Colors.grey,    
+                              colorBlendMode: BlendMode.color,             
+                            )));
+                  }).toList(),
+                ),
+                SizedBox(
+                    height: 362,
+                    width: 400,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                        splittedImage.sublist(0,3).map((puzzle) {
+                          return Draggable<Container>(
+                            data: Container(
+                            height: 150,
+                            width: 130,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1),
+                              color: Colors.grey,
+                            ),
+                            child: Image(
+                              image: puzzle.image,
+                              fit: BoxFit.fill,     
+                              color: Colors.grey,    
+                              colorBlendMode: BlendMode.color,  
+                              height: 150,           
+                            )),
+                            child: Image(
+                              image: puzzle.image,
+                              fit: BoxFit.fill,     
+                              height: 90,       
+                            ),
+                            feedback: Image(
+                              image: puzzle.image,
+                              fit: BoxFit.fill,     
+                              color: Colors.grey,    
+                              colorBlendMode: BlendMode.color,             
+                            ),
+                            childWhenDragging: null,
+                          );
+                        }).toList()..shuffle(Random(0)),
+          )         
+                    )
+              ])));
+    }
   }
 
-  void bringToTop(Widget widget) {
-    setState(() {
-      pieces.remove(widget);
-      pieces.add(widget);
-    });
-  }
-
-// when a piece reaches its final position, it will be sent to the back of the stack to not get in the way of other, still movable, pieces
-  void sendToBack(Widget widget) {
-    setState(() {
-      pieces.remove(widget);
-      pieces.insert(0, widget);
-    });
+  Widget _buildDragTarget(puzzle) {
+    return DragTarget<Widget>(
+      builder: (BuildContext context, List<Widget> incoming, List rejected) {
+        if (true) {
+          return Container(
+            color: Colors.white,
+            child: puzzle,
+            alignment: Alignment.center,
+            height: 80,
+            width: 200,
+          );
+        }
+      },
+      onWillAccept: (data) => data == puzzle,
+      onAccept: (data) {
+        setState(() {});
+      },
+      onLeave: (data) {},
+    );
   }
 }

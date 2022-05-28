@@ -43,6 +43,7 @@ class _ShuffledPiecesState extends State<ShuffledPieces> {
             image: puzzle.image,
             fit: BoxFit.fill,
             height: 90,
+            width: 125
           ),
           feedback: Image(
             image: puzzle.image,

@@ -16,12 +16,14 @@ class _MenuOption extends State<MenuOption> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key('menu-option'),
       height: 200,
       width: 300,
       color: Colors.white,
       padding: EdgeInsets.all(5.0),
         child: SizedBox(
           child: ElevatedButton(
+                key: Key('menu-image-button'),
                 onPressed: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (context) => widget.Puzzle));

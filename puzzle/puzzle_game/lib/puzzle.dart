@@ -7,11 +7,13 @@ import 'package:flutter_complete_guide/widgets/shuffled_pieces_widget.dart';
 import 'package:flutter_complete_guide/widgets/splitted_row_widget.dart';
 
 class Puzzle extends StatefulWidget {
-  final int rows = 3;
+  final int rows = 4;
   final int cols = 3;
   final String imagePath;
+  final Map<String, bool> helperFittedMap;
+  final List<Image> splittedImage;
 
-  Puzzle({this.imagePath});
+  Puzzle({this.imagePath, this.helperFittedMap, this.splittedImage});
 
   @override
   _PuzzleState createState() => _PuzzleState();
@@ -40,15 +42,16 @@ class _PuzzleState extends State<Puzzle> {
               shuffledImages[i.toString()] = false,
             },
           shuffledImage.addAll(splittedImage),
+          //widget.splittedImage.addAll(splittedImage),
         }));
+    //widget.helperFittedMap.addAll(fittedImages);
   }
 
   @override
   Widget build(BuildContext context) {
     if (splittedImage == null || splittedImage.length == 0) {
       return Center(child: CircularProgressIndicator());
-    }
-    else {
+    } else {
       return Scaffold(
           appBar: AppBar(
               title: Text('Flutter Puzzle'), backgroundColor: Colors.pink),
@@ -71,19 +74,27 @@ class _PuzzleState extends State<Puzzle> {
                     start: 6,
                     end: 9,
                     fittedImages: fittedImages),
+                     SplittedRow(
+                    splittedImage: splittedImage,
+                    start: 9,
+                    end: 12,
+                    fittedImages: fittedImages),
                 Container(
                     padding: EdgeInsets.only(top: 30.0),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ShuffledPieces(
-                            shuffledImage: shuffledImage.sublist(0, 3), shuffledImages: shuffledImages
+                              shuffledImage: shuffledImage.sublist(0, 4),
+                              shuffledImages: shuffledImages),
+                          ShuffledPieces(
+                            shuffledImage: shuffledImage.sublist(4, 8),
+                            shuffledImages: shuffledImages,
+                            hereShowEndSection: true,
                           ),
                           ShuffledPieces(
-                              shuffledImage: shuffledImage.sublist(3, 6), shuffledImages: shuffledImages,
-                              hereShowEndSection: true,),
-                          ShuffledPieces(
-                              shuffledImage: shuffledImage.sublist(6, 9), shuffledImages: shuffledImages),
+                              shuffledImage: shuffledImage.sublist(8, 12),
+                              shuffledImages: shuffledImages),
                         ]))
               ])));
     }

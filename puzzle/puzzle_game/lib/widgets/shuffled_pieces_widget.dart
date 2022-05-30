@@ -115,7 +115,7 @@ class _ShuffledPiecesState extends State<ShuffledPieces> {
             )),
           ));
     }
-    return Column(
+    return SingleChildScrollView(child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: imageList.map((puzzle) {
         return Draggable<Image>(
@@ -128,11 +128,12 @@ class _ShuffledPiecesState extends State<ShuffledPieces> {
                 width: 150,
                 semanticLabel: puzzle.semanticLabel),
             child: Image(
-                image: puzzle.image, fit: BoxFit.fill, height: 90, width: 125),
+                image: puzzle.image, fit: BoxFit.fill, height: 73, width: 125),
             feedback: Image(
               image: puzzle.image,
               fit: BoxFit.fill,
               height: 90,
+              width: 125,
             ),
             childWhenDragging: Container(),
             onDragCompleted: () => {
@@ -145,6 +146,6 @@ class _ShuffledPiecesState extends State<ShuffledPieces> {
                 });
       }).toList()
         ..shuffle(Random(0)),
-    );
+    ));
   }
 }

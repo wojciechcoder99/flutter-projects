@@ -27,7 +27,7 @@ class _SplittedRowState extends State<SplittedRow> {
       children:
           widget.splittedImage.sublist(widget.start, widget.end).map((piece) {
         return SizedBox(
-            width: 128, height: 120, child: _buildDragTarget(piece));
+            width: 128, height: 100, child: _buildDragTarget(piece));
       }).toList(),
     );
   }

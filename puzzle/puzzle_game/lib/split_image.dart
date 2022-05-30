@@ -7,11 +7,11 @@ class SplitImage {
 
     int x = 0, y = 0;
     int width = (image.width / 3).round();
-    int height = (image.height / 3).round();
+    int height = (image.height / 4).round();
 
     // split image to parts
     List<imglib.Image> parts = [];
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 3; j++) {
         parts.add(imglib.copyCrop(image, x, y, width, height));
         x += width;

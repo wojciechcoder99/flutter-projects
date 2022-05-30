@@ -17,12 +17,12 @@ class ChoiceMenu extends StatelessWidget {
             MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_TWO,), imagePath: ImagesPath.IMAGE_TWO),
             MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_THREE,), imagePath: ImagesPath.IMAGE_THREE),
             MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_FOUR,), imagePath: ImagesPath.IMAGE_FOUR),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
-            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_ONE,), imagePath: ImagesPath.IMAGE_ONE),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_FIVE,), imagePath: ImagesPath.IMAGE_FIVE),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_SIX,), imagePath: ImagesPath.IMAGE_SIX),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_SEVEN,), imagePath: ImagesPath.IMAGE_SEVEN),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_EIGHT,), imagePath: ImagesPath.IMAGE_EIGHT),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_NINE,), imagePath: ImagesPath.IMAGE_NINE),
+            MenuOption(Puzzle: new Puzzle(imagePath: ImagesPath.IMAGE_TEN,), imagePath: ImagesPath.IMAGE_TEN),
       ],
     )])));
   }

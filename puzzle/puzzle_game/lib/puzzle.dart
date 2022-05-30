@@ -23,31 +23,32 @@ class _PuzzleState extends State<Puzzle> {
   List<Image> splittedImage = [];
   List<Image> shuffledImage = [];
   final Map<String, bool> fittedImages = {};
+  final Map<String, bool> shuffledImages = {};
 
   initState() {
     super.initState();
     List<Image> helper;
-    rootBundle
-        .load(widget.imagePath)
-        .then((data) => setState(() => {
-              helper = SplitImage.splitImage(data.buffer.asUint8List()),
-              for (int i = 0; i < helper.length; i++)
-                {
-                  splittedImage.add(Image(
-                    image: helper[i].image,
-                    semanticLabel: i.toString(),
-                  )),
-                  fittedImages[i.toString()] = false,
-                },
-              shuffledImage.addAll(splittedImage),
-            }));
+    rootBundle.load(widget.imagePath).then((data) => setState(() => {
+          helper = SplitImage.splitImage(data.buffer.asUint8List()),
+          for (int i = 0; i < helper.length; i++)
+            {
+              splittedImage.add(Image(
+                image: helper[i].image,
+                semanticLabel: i.toString(),
+              )),
+              fittedImages[i.toString()] = false,
+              shuffledImages[i.toString()] = false,
+            },
+          shuffledImage.addAll(splittedImage),
+        }));
   }
 
   @override
   Widget build(BuildContext context) {
     if (splittedImage == null || splittedImage.length == 0) {
       return Center(child: CircularProgressIndicator());
-    } else {
+    }
+    else {
       return Scaffold(
           appBar: AppBar(
               title: Text('Flutter Puzzle'), backgroundColor: Colors.pink),
@@ -76,11 +77,13 @@ class _PuzzleState extends State<Puzzle> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ShuffledPieces(
-                              shuffledImage: shuffledImage.sublist(0, 3)),
+                            shuffledImage: shuffledImage.sublist(0, 3), shuffledImages: shuffledImages
+                          ),
                           ShuffledPieces(
-                              shuffledImage: shuffledImage.sublist(3, 6)),
+                              shuffledImage: shuffledImage.sublist(3, 6), shuffledImages: shuffledImages,
+                              hereShowEndSection: true,),
                           ShuffledPieces(
-                              shuffledImage: shuffledImage.sublist(6, 9)),
+                              shuffledImage: shuffledImage.sublist(6, 9), shuffledImages: shuffledImages),
                         ]))
               ])));
     }
